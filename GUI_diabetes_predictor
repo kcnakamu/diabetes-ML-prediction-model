@@ -1,0 +1,58 @@
+import tkinter as tk
+from tkinter import ttk
+import joblib
+
+# Load your trained model
+model = joblib.load("diabetes_model.joblib")  # Replace "diabetes_model.joblib" with your actual model file
+
+# Create the Tkinter application
+app = tk.Tk()
+app.title("Diabetes Prediction Model")
+
+# Run the Tkinter main loop
+def predict_diabetes(user_entries):
+    # Get the input values from the GUI and convert them to appropriate data types
+    age = int(user_entries[0].get())
+    gender = int(user_entries[1].get())
+    gender_female = 0
+    gender_male = 0
+    if gender == 0:
+        gender_male = 11
+    else:
+        gender_female = 1
+    bmi = float(user_entries[2].get())
+    hypertension = int(user_entries[3].get())
+    heart_disease = int(user_entries[4].get())
+    HbA1c_level = float(user_entries[5].get())
+    blood_glucose_level = float(user_entries[6].get())
+
+    # Create the feature vector
+    input_data = [[age, hypertension, heart_disease, bmi, HbA1c_level, blood_glucose_level,gender_male,gender_female]]
+
+    # Make the prediction
+    prediction = model.predict(input_data)
+    result_label.config(text="Predicted: " + ("Diabetes" if prediction[0] == 1 else "No Diabetes"))
+
+# Create input fields and labels
+labels = ["Age", "Gender (0 for Male, 1 for Female)", "BMI", "Hypertension (0 for No, 1 for Yes)",
+          "Heart Disease (0 for No, 1 for Yes)", "HbA1c Level", "Blood Glucose Level"]
+entries = []
+
+for i, label_text in enumerate(labels):
+    ttk.Label(app, text=label_text).grid(row=i, column=0)
+    entry = ttk.Entry(app)
+    entry.grid(row=i, column=1)
+    entries.append(entry)
+
+# Create a prediction button
+from functools import partial
+
+predict_button = ttk.Button(app, text="Predict", command=partial(predict_diabetes, entries))
+predict_button.grid(row=len(labels), column=0, columnspan=2)
+
+# Create a label to show the prediction result
+result_label = ttk.Label(app, text="")
+result_label.grid(row=len(labels) + 1, column=0, columnspan=2)
+
+app.mainloop()
+
