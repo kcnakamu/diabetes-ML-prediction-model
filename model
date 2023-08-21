@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 
 # Read CSV file
 df = pd.read_csv("/Users/aquachat77/Downloads/diabetes_prediction_dataset.csv")
-#print(patients.head())
+# print(df.head())
 # sizes = df[""].value_counts(sort=1)
 # print(sizes)
 
