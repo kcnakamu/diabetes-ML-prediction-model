@@ -1,6 +1,6 @@
 # Diabetes Prediction Machine Learning Model
 
-This repository contains code for creating a machine-learning model to predict the likelihood of diabetes using a diabetes prediction dataset. The model uses a RandomForestClassifier to perform the prediction. The dataset is preprocessed and features are selected to train and test the model.
+This repository contains code for creating a machine-learning model to predict the likelihood of diabetes using a diabetes prediction dataset. The model uses a RandomForestClassifier and 80/10/10 split to perform the prediction. The dataset is preprocessed and features are selected to train and test the model. Model Accuracy: 0.9688
 
 ## Getting Started
 
