@@ -7,13 +7,10 @@ from matplotlib import pyplot as plt
 
 # Read CSV file
 df = pd.read_csv("/Users/aquachat77/Downloads/diabetes_prediction_dataset.csv")
-# print(df.head())
-# sizes = df[""].value_counts(sort=1)
-# print(sizes)
 
 # Drop unnecessary columns
-df.drop(["smoking_history"], axis = 1, inplace= True)
-df.dropna(inplace = True)
+df.drop(["smoking_history"], axis=1, inplace=True)
+df.dropna(inplace=True)
 
 # Apply one-hot encoding to all categorical variables, including 'gender'
 df_encoded = pd.get_dummies(df, drop_first=True)
@@ -22,28 +19,34 @@ df_encoded = pd.get_dummies(df, drop_first=True)
 Y = df_encoded['diabetes'].values
 X = df_encoded.drop(labels=['diabetes'], axis=1)
 
-# Split data into training and testing datasets using 80/20 split
+# Split data into 80% training, 10% validation, and 10% testing datasets
 from sklearn.model_selection import train_test_split
-X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size = 0.2, random_state=20)
+X_train, X_temp, Y_train, Y_temp = train_test_split(X, Y, test_size=0.2, random_state=20)
+X_validation, X_test, Y_validation, Y_test = train_test_split(X_temp, Y_temp, test_size=0.5, random_state=20)
 
-# # We are predicting a binary result (diabetes vs not), so we will use classifier instead of regressor
+# We are predicting a binary result (diabetes vs not), so we will use a classifier instead of a regressor
 from sklearn.ensemble import RandomForestClassifier
-model = RandomForestClassifier(n_estimators=10,random_state=30)
-model.fit(X_train,Y_train)
+model = RandomForestClassifier(n_estimators=10, random_state=30)
+model.fit(X_train, Y_train)
 
-prediction_test = model.predict(X_test)
-#print(prediction_test)
+# Predict using the validation set
+prediction_validation = model.predict(X_validation)
 
 from sklearn import metrics
-print("Model Accuracy = ", metrics.accuracy_score(Y_test,prediction_test))
+print("Validation Accuracy = ", metrics.accuracy_score(Y_validation, prediction_validation))
+
+# Evaluate the model using the true testing set
+prediction_test = model.predict(X_test)
+print("Test Accuracy = ", metrics.accuracy_score(Y_test, prediction_test))
 
 # Feature Importance 
 feature_list = list(X.columns)
 print("Input feature list: " + str(feature_list))
-feature_imp = pd.Series(model.feature_importances_,index = feature_list).sort_values(ascending = False)
-print("Ordered list of key contriuting features: \n" + str(feature_imp))
+feature_imp = pd.Series(model.feature_importances_, index=feature_list).sort_values(ascending=False)
+print("Ordered list of key contributing features: \n" + str(feature_imp))
 
-# Save my trained model
+# Save the trained model
 import joblib
 trained_model = model
 joblib.dump(trained_model, "diabetes_model.joblib")
+
